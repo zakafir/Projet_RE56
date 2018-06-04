@@ -20,8 +20,11 @@ import javafx.scene.shape.TriangleMesh;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jdk.internal.util.xml.impl.Pair;
+import sample.Model.BTS;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class Main extends Application {
@@ -29,9 +32,13 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("mainScreen.fxml"));
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Handover RE56");
         primaryStage.setScene(new Scene(root, 1200, 700));
         primaryStage.show();
+
+        // List of BTS
+        ArrayList<BTS> btsList = new ArrayList<>();
+
 
         // linking circle with its java object
         Circle myDevice = (Circle) root.lookup("#myDevice");
@@ -94,6 +101,7 @@ public class Main extends Application {
         //System.out.println(anchorPane.getChildren().add(networkLink));
         //anchorPane.getChildren().add(networkLink)
 
+        /* **** Creating Dialog box when clicking BTS button ***** */
         Dialog dialog = new Dialog<>();
         dialog.setTitle("Login Dialog");
         dialog.setHeaderText("Look, a Custom Login Dialog");
@@ -108,13 +116,73 @@ public class Main extends Application {
         TextField powerTrInput = new TextField();
         powerTrInput.setPromptText("Power transmitter");
 
-        grid.add(new Label("Gain Transmitter:"),0,0);
-        grid.add(gainTrInput, 1 ,0);
-        grid.add(new Label("Power Transmitter:"),0,1);
-        grid.add(powerTrInput, 1 ,1);
+        TextField antennaPosXIntput = new TextField();
+        antennaPosXIntput.setPromptText("Antenna position X:");
+
+        TextField antennaPosYIntput = new TextField();
+        antennaPosYIntput.setPromptText("Antenna position Y:");
+
+        TextField antennaFrequency = new TextField();
+        antennaFrequency.setPromptText("Antenna Frequency:");
+
+        TextField antennaCapcity = new TextField();
+        antennaCapcity.setPromptText("Antenna Capacity:");
+
+        grid.add(new Label("Position X:"),0,0);
+        grid.add(antennaPosXIntput, 1 ,0);
+
+        grid.add(new Label("Position Y:"),0,1);
+        grid.add(antennaPosYIntput, 1 ,1);
+
+        grid.add(new Label("Gain Transmitter:"),0,2);
+        grid.add(gainTrInput, 1 ,2);
+
+        grid.add(new Label("Power Transmitter:"),0,3);
+        grid.add(powerTrInput, 1 ,3);
+
+        grid.add(new Label("Antenna Frequency:"),0,4);
+        grid.add(antennaFrequency, 1 ,4);
+
+        grid.add(new Label("Antenna Capacity:"),0,5);
+        grid.add(antennaCapcity, 1 ,5);
+
+        ButtonType btsValidateButtonType = new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btsValidateButtonType, ButtonType.CANCEL);
 
         dialog.getDialogPane().setContent(grid);
 
+        // when validate button of bts form is clicked
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btsValidateButtonType) {
+                BTS addedBTS = new BTS ("",
+                        Integer.parseInt(antennaPosXIntput.getText()),
+                        Integer.parseInt(antennaPosYIntput.getText()),
+                        Double.parseDouble(gainTrInput.getText()),
+                        Double.parseDouble(powerTrInput.getText()),
+                        Long.parseLong(antennaFrequency.getText()),
+                        Integer.parseInt(antennaCapcity.getText())
+                );
+
+                Rectangle btsShape = new Rectangle();
+                btsShape.setX(addedBTS.getPositionX());
+                btsShape.setY(addedBTS.getPositionY());
+                btsShape.setWidth(50);
+                btsShape.setHeight(90);
+                btsShape.setArcHeight(5);
+                btsShape.setArcWidth(5);
+                btsShape.setStroke(Color.BLACK);
+                btsShape.setFill(Color.valueOf("#1f93ff00"));
+
+                addedBTS.setShape(btsShape);
+                // adding a BTS to the BTS list
+                btsList.add(addedBTS);
+
+                anchorPane.getChildren().addAll(addedBTS.getShape());
+
+                System.out.println(addedBTS);
+            }
+            return null;
+        });
         createLink(myDevice, bts1);
 
 
@@ -130,6 +198,8 @@ public class Main extends Application {
 
 
         Button btsButton = (Button) root.lookup("#btsButton");
+
+        // event handler on BTS button click
         btsButton.setOnAction((event) -> {
             System.out.print("bts button clicked!");
             //Circle myBTS = new Circle(250,250,250 , Color.YELLOW);

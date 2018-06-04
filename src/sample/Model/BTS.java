@@ -1,6 +1,6 @@
 package sample.Model;
 
-import java.awt.*;
+import javafx.scene.shape.Rectangle;
 
 public class BTS {
 
@@ -18,7 +18,7 @@ public class BTS {
 
     }
 
-    public BTS(String name, int positionX, int positionY, double gainTransmitting, double powerTransmitting, Long frequency, int height, int capacity) {
+    public BTS(String name, int positionX, int positionY, double gainTransmitting, double powerTransmitting, Long frequency, int capacity) {
         this.name = name;
         this.positionX = positionX;
         this.positionY = positionY;
@@ -112,4 +112,20 @@ public class BTS {
     public void setShape(Rectangle shape) {
         this.shape = shape;
     }
+
+    @Override
+    public String toString() {
+        return "BTS{" +
+                "name='" + name + '\'' +
+                ", positionX=" + positionX +
+                ", positionY=" + positionY +
+                ", gainTransmitting=" + gainTransmitting +
+                ", powerTransmitting=" + powerTransmitting +
+                ", frequency=" + frequency +
+                ", height=" + height +
+                ", capacity=" + capacity +
+                ", shape=" + shape +
+                '}';
+    }
 }
+
