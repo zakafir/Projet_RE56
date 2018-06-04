@@ -1,5 +1,6 @@
 package sample;
 
+import com.oracle.tools.packager.Log;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -117,10 +118,12 @@ public class Main extends Application {
         createLink(myDevice, bts1);
 
 
-        networkLink.startXProperty().bind(bts1.widthProperty().add(bts1.widthProperty()));
-        networkLink.startYProperty().bind(bts1.widthProperty().add(bts1.widthProperty()));
-        networkLink.endXProperty().bind(myDevice.centerXProperty().add(myDevice.translateXProperty()));
-        networkLink.endYProperty().bind(myDevice.centerYProperty().add(myDevice.translateYProperty()));
+        networkLink.startXProperty().bind(bts1.xProperty().add(bts1.layoutXProperty()));
+        networkLink.startYProperty().bind(bts1.yProperty().add(bts1.layoutYProperty()));
+
+        networkLink.endXProperty().bind(myDevice.layoutXProperty().add(myDevice.translateXProperty()));
+        networkLink.endYProperty().bind(myDevice.layoutYProperty().add(myDevice.translateYProperty()));
+
         networkLink.setStroke(Color.RED);
 
 
