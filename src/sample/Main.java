@@ -114,6 +114,15 @@ public class Main extends Application {
 
         dialog.getDialogPane().setContent(grid);
 
+        createLink(myDevice, bts1);
+
+
+        networkLink.startXProperty().bind(bts1.widthProperty().add(bts1.widthProperty()));
+        networkLink.startYProperty().bind(bts1.widthProperty().add(bts1.widthProperty()));
+        networkLink.endXProperty().bind(myDevice.centerXProperty().add(myDevice.translateXProperty()));
+        networkLink.endYProperty().bind(myDevice.centerYProperty().add(myDevice.translateYProperty()));
+        networkLink.setStroke(Color.RED);
+
 
 
 

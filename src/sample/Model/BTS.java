@@ -1,5 +1,7 @@
 package sample.Model;
 
+import java.awt.*;
+
 public class BTS {
 
     private String name;
@@ -10,6 +12,7 @@ public class BTS {
     private Long frequency;
     private int height;
     private int capacity;
+    private Rectangle shape;
 
     public BTS() {
 
@@ -24,6 +27,18 @@ public class BTS {
         this.frequency = frequency;
         this.height = height;
         this.capacity = capacity;
+    }
+
+    public BTS(String name, int positionX, int positionY, double gainTransmitting, double powerTransmitting, Long frequency, int height, int capacity, Rectangle shape) {
+        this.name = name;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.gainTransmitting = gainTransmitting;
+        this.powerTransmitting = powerTransmitting;
+        this.frequency = frequency;
+        this.height = height;
+        this.capacity = capacity;
+        this.shape = shape;
     }
 
     public String getName() {
@@ -88,5 +103,13 @@ public class BTS {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public Rectangle getShape() {
+        return shape;
+    }
+
+    public void setShape(Rectangle shape) {
+        this.shape = shape;
     }
 }
