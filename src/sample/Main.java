@@ -1,10 +1,12 @@
 package sample;
 
-import com.oracle.tools.packager.Log;
+//import com.oracle.tools.packager.Log;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -20,6 +22,9 @@ import javafx.scene.shape.TriangleMesh;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jdk.internal.util.xml.impl.Pair;
+import javafx.scene.input.MouseEvent;
+
+import org.w3c.dom.css.Rect;
 import sample.Model.BTS;
 
 import java.io.File;
@@ -28,6 +33,12 @@ import java.util.List;
 import java.util.Optional;
 
 public class Main extends Application {
+    // Cordonnées repère
+    double orgSceneX, orgSceneY;
+    double orgTranslateX, orgTranslateY;
+    boolean appLaunched = false;
+    boolean appPause = false;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -38,6 +49,7 @@ public class Main extends Application {
 
         // List of BTS
         ArrayList<BTS> btsList = new ArrayList<>();
+
 
 
         // linking circle with its java object
@@ -66,13 +78,15 @@ public class Main extends Application {
 
         playButton.setOnAction((event) -> {
             transition.play();
-            //timeline.play();
+            appLaunched = true;
         });
 
         //creating pause button logic
         Button pauseButton = (Button) root.lookup("#pauseButton");
         pauseButton.setOnAction((event) -> {
             transition.pause();
+            appPause = true;
+            appLaunched= false;
         });
 
         //creating stop button logic
@@ -83,7 +97,7 @@ public class Main extends Application {
 
         // initialize bts 1
         Rectangle bts1 = (Rectangle) root.lookup("#bts1");
-        //Image bts1Image = new Image("../assets/antenna.png");
+        //Image bts1Image = new Image("/assets/antenna.png");
         //bts1.setFill(new ImagePattern(bts1Image));
 
 
@@ -103,8 +117,8 @@ public class Main extends Application {
 
         /* **** Creating Dialog box when clicking BTS button ***** */
         Dialog dialog = new Dialog<>();
-        dialog.setTitle("Login Dialog");
-        dialog.setHeaderText("Look, a Custom Login Dialog");
+        dialog.setTitle("Adding BTS");
+        dialog.setHeaderText("Please insert BTS properties");
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -146,8 +160,27 @@ public class Main extends Application {
         grid.add(new Label("Antenna Capacity:"),0,5);
         grid.add(antennaCapcity, 1 ,5);
 
+
+
         ButtonType btsValidateButtonType = new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(btsValidateButtonType, ButtonType.CANCEL);
+
+        // Enable/Disable validate button depending on whether values are entered
+        Node validateButton = dialog.getDialogPane().lookupButton(btsValidateButtonType);
+        validateButton.setDisable(true);
+
+        // Do some validation (using the Java 8 lambda syntax).
+        antennaPosXIntput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!antennaPosYIntput.getText().trim().isEmpty())
+            validateButton.setDisable(newValue.trim().isEmpty());
+
+        });
+        antennaPosYIntput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!antennaPosXIntput.getText().trim().isEmpty())
+            validateButton.setDisable(newValue.trim().isEmpty());
+        });
+
+
 
         dialog.getDialogPane().setContent(grid);
 
@@ -172,10 +205,49 @@ public class Main extends Application {
                 btsShape.setArcWidth(5);
                 btsShape.setStroke(Color.BLACK);
                 btsShape.setFill(Color.valueOf("#1f93ff00"));
+                // setting bts image
+                //Image bts1Image = new Image("file:antenna.png",100,0, false , false);
+                //btsShape.setFill(new ImagePattern(bts1Image));
+
+                //event click sur shape
+                EventHandler<MouseEvent> btsShapeOnMousePressedEventHandler =
+                        new EventHandler<MouseEvent>() {
+
+                            @Override
+                            public void handle(MouseEvent t) {
+                                orgSceneX = t.getSceneX();
+                                orgSceneY = t.getSceneY();
+                                orgTranslateX = ((Rectangle)(t.getSource())).getTranslateX();
+                                orgTranslateY = ((Rectangle)(t.getSource())).getTranslateY();
+                            }
+                        };
+
+                // drag event on shape
+                EventHandler<MouseEvent> btsShapeOnMouseDraggedEventHandler =
+                        new EventHandler<MouseEvent>() {
+
+                            @Override
+                            public void handle(MouseEvent t) {
+                                if(!appLaunched) {
+                                    double offsetX = t.getSceneX() - orgSceneX;
+                                    double offsetY = t.getSceneY() - orgSceneY;
+                                    double newTranslateX = orgTranslateX + offsetX;
+                                    double newTranslateY = orgTranslateY + offsetY;
+
+                                    ((Rectangle) (t.getSource())).setTranslateX(newTranslateX);
+                                    ((Rectangle) (t.getSource())).setTranslateY(newTranslateY);
+                                }
+                            }
+                        };
+
+                btsShape.setOnMousePressed(btsShapeOnMousePressedEventHandler);
+                btsShape.setOnMouseDragged(btsShapeOnMouseDraggedEventHandler);
+
 
                 addedBTS.setShape(btsShape);
                 // adding a BTS to the BTS list
                 btsList.add(addedBTS);
+
 
                 anchorPane.getChildren().addAll(addedBTS.getShape());
 
@@ -209,6 +281,7 @@ public class Main extends Application {
             Optional<String> result = dialog.showAndWait();
 
         });
+
 
 
     }
