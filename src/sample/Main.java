@@ -124,6 +124,9 @@ public class Main extends Application {
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
 
+        TextField btsNameInput = new TextField();
+        btsNameInput.setPromptText("Name of the BTS");
+
         TextField gainTrInput = new TextField();
         gainTrInput.setPromptText("Gain transmitter");
 
@@ -142,23 +145,26 @@ public class Main extends Application {
         TextField antennaCapcity = new TextField();
         antennaCapcity.setPromptText("Antenna Capacity:");
 
-        grid.add(new Label("Position X:"),0,0);
-        grid.add(antennaPosXIntput, 1 ,0);
+        grid.add(new Label("BTS Name"),0,0);
+        grid.add(btsNameInput, 1 ,0);
 
-        grid.add(new Label("Position Y:"),0,1);
-        grid.add(antennaPosYIntput, 1 ,1);
+        grid.add(new Label("Position X:"),0,1);
+        grid.add(antennaPosXIntput, 1 ,1);
 
-        grid.add(new Label("Gain Transmitter:"),0,2);
-        grid.add(gainTrInput, 1 ,2);
+        grid.add(new Label("Position Y:"),0,2);
+        grid.add(antennaPosYIntput, 1 ,2);
 
-        grid.add(new Label("Power Transmitter:"),0,3);
-        grid.add(powerTrInput, 1 ,3);
+        grid.add(new Label("Gain Transmitter:"),0,3);
+        grid.add(gainTrInput, 1 ,3);
 
-        grid.add(new Label("Antenna Frequency:"),0,4);
-        grid.add(antennaFrequency, 1 ,4);
+        grid.add(new Label("Power Transmitter:"),0,4);
+        grid.add(powerTrInput, 1 ,4);
 
-        grid.add(new Label("Antenna Capacity:"),0,5);
-        grid.add(antennaCapcity, 1 ,5);
+        grid.add(new Label("Antenna Frequency:"),0,5);
+        grid.add(antennaFrequency, 1 ,5);
+
+        grid.add(new Label("Antenna Capacity:"),0,6);
+        grid.add(antennaCapcity, 1 ,6);
 
 
 
@@ -187,7 +193,7 @@ public class Main extends Application {
         // when validate button of bts form is clicked
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btsValidateButtonType) {
-                BTS addedBTS = new BTS ("",
+                BTS addedBTS = new BTS (btsNameInput.getText(),
                         Integer.parseInt(antennaPosXIntput.getText()),
                         Integer.parseInt(antennaPosYIntput.getText()),
                         Double.parseDouble(gainTrInput.getText()),
