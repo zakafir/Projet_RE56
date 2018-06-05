@@ -18,6 +18,12 @@ public class BTS {
 
     }
 
+    public BTS(double gainTransmitting, double powerTransmitting, Long frequency) {
+        this.gainTransmitting = gainTransmitting;
+        this.powerTransmitting = powerTransmitting;
+        this.frequency = frequency;
+    }
+
     public BTS(String name, int positionX, int positionY, double gainTransmitting, double powerTransmitting, Long frequency, int capacity) {
         this.name = name;
         this.positionX = positionX;
@@ -33,6 +39,16 @@ public class BTS {
         this.name = name;
         this.positionX = positionX;
         this.positionY = positionY;
+        this.gainTransmitting = gainTransmitting;
+        this.powerTransmitting = powerTransmitting;
+        this.frequency = frequency;
+        this.height = height;
+        this.capacity = capacity;
+        this.shape = shape;
+    }
+
+    public BTS(String name, double gainTransmitting, double powerTransmitting, Long frequency, int height, int capacity, Rectangle shape) {
+        this.name = name;
         this.gainTransmitting = gainTransmitting;
         this.powerTransmitting = powerTransmitting;
         this.frequency = frequency;

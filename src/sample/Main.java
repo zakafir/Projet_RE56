@@ -22,15 +22,16 @@ import javafx.scene.shape.TriangleMesh;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jdk.internal.util.xml.impl.Pair;
+import sample.Controller.Calcul;
 import javafx.scene.input.MouseEvent;
 
 import org.w3c.dom.css.Rect;
+import sample.Controller.MapUtil;
 import sample.Model.BTS;
+import sample.Model.Device;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Main extends Application {
     // Cordonnées repère
@@ -39,6 +40,8 @@ public class Main extends Application {
     boolean appLaunched = false;
     boolean appPause = false;
 
+
+    public static int count = 0;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -49,11 +52,15 @@ public class Main extends Application {
 
         // List of BTS
         ArrayList<BTS> btsList = new ArrayList<>();
+        Map<String,Double> distances = new HashMap<>();
 
 
 
         // linking circle with its java object
-        Circle myDevice = (Circle) root.lookup("#myDevice");
+
+        Device myDevice = new Device();
+        Circle deviceShape = (Circle) root.lookup("#myDevice");
+        myDevice.setShape(deviceShape);
         Line myLine = (Line) root.lookup("#mySegment");
 
 
@@ -71,7 +78,7 @@ public class Main extends Application {
 
         transition.setToX(myLine.getEndX());
         //transition.setToY(myLine.getEndY());
-        transition.setNode(myDevice);
+        transition.setNode(deviceShape);
 
         //creating  play button logic
         Button playButton = (Button) root.lookup("#playButton");
@@ -79,13 +86,6 @@ public class Main extends Application {
         playButton.setOnAction((event) -> {
             transition.play();
             appLaunched = true;
-        });
-
-        //creating pause button logic
-        Button pauseButton = (Button) root.lookup("#pauseButton");
-        pauseButton.setOnAction((event) -> {
-            transition.pause();
-            appPause = true;
         });
 
         //creating stop button logic
@@ -97,12 +97,18 @@ public class Main extends Application {
 
         // initialize bts 1
         Rectangle bts1 = (Rectangle) root.lookup("#bts1");
+        BTS firstBts = new BTS("First BTS",133.0,12.0,
+                3000L,100,3,bts1);
+        double lamda1 = Calcul.lamda(firstBts.getFrequency());
+        System.out.println("lamda du BTS 1: "+lamda1);
+
+        //Image bts1Image = new Image("../assets/antenna.png");
         //Image bts1Image = new Image("/assets/antenna.png");
         //bts1.setFill(new ImagePattern(bts1Image));
 
 
         Line networkLink = new Line();
-        networkLink.setStartX(myDevice.getCenterX());
+        networkLink.setStartX(deviceShape.getCenterX());
         //networkLink.setStartY(myDevice.getCenterY());
         networkLink.setEndX(bts1.getX());
         //networkLink.setEndY(bts1.getY());
@@ -261,14 +267,14 @@ public class Main extends Application {
             }
             return null;
         });
-        createLink(myDevice, bts1);
+        createLink(deviceShape, bts1);
 
 
         networkLink.startXProperty().bind(bts1.xProperty().add(bts1.layoutXProperty()));
         networkLink.startYProperty().bind(bts1.yProperty().add(bts1.layoutYProperty()));
 
-        networkLink.endXProperty().bind(myDevice.layoutXProperty().add(myDevice.translateXProperty()));
-        networkLink.endYProperty().bind(myDevice.layoutYProperty().add(myDevice.translateYProperty()));
+        networkLink.endXProperty().bind(deviceShape.layoutXProperty().add(deviceShape.translateXProperty()));
+        networkLink.endYProperty().bind(deviceShape.layoutYProperty().add(deviceShape.translateYProperty()));
 
         networkLink.setStroke(Color.RED);
 
@@ -282,9 +288,67 @@ public class Main extends Application {
             System.out.print("bts button clicked!");
             //Circle myBTS = new Circle(250,250,250 , Color.YELLOW);
             //root.getChildrenUnmodifiable().add(1 , myBTS);
-            createLink(myDevice, bts1);
+            createLink(deviceShape, bts1);
             //alert.showAndWait();
             Optional<String> result = dialog.showAndWait();
+
+        });
+
+        //creating pause button logic
+        Button pauseButton = (Button) root.lookup("#pauseButton");
+        pauseButton.setOnAction((event) -> {
+            appPause = true;
+            count++;
+            transition.pause();
+
+            distances.put("d1",Calcul.distance(
+                    deviceShape.translateXProperty().getValue(),
+                    deviceShape.translateYProperty().getValue(),
+                    bts1.getLayoutX(),
+                    bts1.getLayoutY()));
+
+
+            System.out.println("distance between device and BTS 1 is: "+distances.get("d1"));
+            System.out.println("Receiving power 1: "+
+                    Calcul.calculReceivingPower(firstBts,myDevice.getGainReceiving(),lamda1,distances.get("d1")));
+            int compteur = 2;
+            for(BTS b: btsList){
+                distances.put("d"+compteur,Calcul.distance(
+                        deviceShape.translateXProperty().getValue(),
+                        deviceShape.translateYProperty().getValue(),
+                        b.getShape().getX(),
+                        b.getShape().getY()));
+                System.out.println("distance between device and BTS"+compteur+" is: "+distances.get("d"+compteur));
+
+                System.out.println("Receiving power for BTS "+compteur+": "+
+                        Calcul.calculReceivingPower(b,myDevice.getGainReceiving(),Calcul.lamda(b.getFrequency())
+                                ,distances.get("d"+compteur)));
+                compteur++;
+
+                System.out.println("--------------------------------------------------");
+
+                if(count == 2) {
+                    MapUtil.sortByValue(distances);
+                    Map.Entry<String,Double> entry = distances.entrySet().iterator().next();
+                    String key = entry.getKey();
+                    Double value = entry.getValue();
+
+                    if (Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")) >
+                            Calcul.calculReceivingPower(b, myDevice.getGainReceiving(), Calcul.lamda(b.getFrequency()), distances.get("d2"))) {
+                        System.out.println("BTS 1 choisi");
+                        if(firstBts.getCapacity() < 1){
+                            System.out.println("BTS 1 manque de capacité");
+                            //switch vers BTS 2
+                            System.out.println("switch vers BTS 2");
+                        }
+                    } else {
+                        System.out.println("BTS 2 choisi");
+                    }
+                }
+            }
+
+
+            //pop-up
 
         });
 
