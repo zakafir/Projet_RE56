@@ -86,13 +86,13 @@ public class Main extends Application {
         pauseButton.setOnAction((event) -> {
             transition.pause();
             appPause = true;
-            appLaunched= false;
         });
 
         //creating stop button logic
         Button stopButton = (Button) root.lookup("#stopButton");
         stopButton.setOnAction((event) -> {
             transition.stop();
+            appLaunched= false;
         });
 
         // initialize bts 1
