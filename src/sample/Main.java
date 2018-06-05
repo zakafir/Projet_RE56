@@ -1,6 +1,7 @@
 package sample;
 
 //import com.oracle.tools.packager.Log;
+
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -44,7 +45,7 @@ public class Main extends Application {
     public static int count = 0;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("mainScreen.fxml"));
         primaryStage.setTitle("Handover RE56");
         primaryStage.setScene(new Scene(root, 1200, 700));
@@ -52,8 +53,8 @@ public class Main extends Application {
 
         // List of BTS
         ArrayList<BTS> btsList = new ArrayList<>();
-        Map<String,Double> distances = new HashMap<>();
-
+        Map<String, Double> distances = new HashMap<>();
+        Map<String, Double> receivingPowerMap = new HashMap<>();
 
 
         // linking circle with its java object
@@ -92,15 +93,15 @@ public class Main extends Application {
         Button stopButton = (Button) root.lookup("#stopButton");
         stopButton.setOnAction((event) -> {
             transition.stop();
-            appLaunched= false;
+            appLaunched = false;
         });
 
         // initialize bts 1
         Rectangle bts1 = (Rectangle) root.lookup("#bts1");
-        BTS firstBts = new BTS("First BTS",133.0,12.0,
-                3000L,100,3,bts1);
+        BTS firstBts = new BTS("First BTS", 133.0, 12.0,
+                3000L, 100, 3, bts1);
         double lamda1 = Calcul.lamda(firstBts.getFrequency());
-        System.out.println("lamda du BTS 1: "+lamda1);
+        System.out.println("lamda du BTS 1: " + lamda1);
 
         //Image bts1Image = new Image("../assets/antenna.png");
         //Image bts1Image = new Image("/assets/antenna.png");
@@ -114,7 +115,7 @@ public class Main extends Application {
         //networkLink.setEndY(bts1.getY());
 
 
-        Circle testCircle = new Circle(250,300,300);
+        Circle testCircle = new Circle(250, 300, 300);
 
         AnchorPane anchorPane = (AnchorPane) root.lookup("#Content");
         anchorPane.getChildren().addAll(networkLink);
@@ -151,27 +152,26 @@ public class Main extends Application {
         TextField antennaCapcity = new TextField();
         antennaCapcity.setPromptText("Antenna Capacity:");
 
-        grid.add(new Label("BTS Name"),0,0);
-        grid.add(btsNameInput, 1 ,0);
+        grid.add(new Label("BTS Name"), 0, 0);
+        grid.add(btsNameInput, 1, 0);
 
-        grid.add(new Label("Position X:"),0,1);
-        grid.add(antennaPosXIntput, 1 ,1);
+        grid.add(new Label("Position X:"), 0, 1);
+        grid.add(antennaPosXIntput, 1, 1);
 
-        grid.add(new Label("Position Y:"),0,2);
-        grid.add(antennaPosYIntput, 1 ,2);
+        grid.add(new Label("Position Y:"), 0, 2);
+        grid.add(antennaPosYIntput, 1, 2);
 
-        grid.add(new Label("Gain Transmitter:"),0,3);
-        grid.add(gainTrInput, 1 ,3);
+        grid.add(new Label("Gain Transmitter:"), 0, 3);
+        grid.add(gainTrInput, 1, 3);
 
-        grid.add(new Label("Power Transmitter:"),0,4);
-        grid.add(powerTrInput, 1 ,4);
+        grid.add(new Label("Power Transmitter:"), 0, 4);
+        grid.add(powerTrInput, 1, 4);
 
-        grid.add(new Label("Antenna Frequency:"),0,5);
-        grid.add(antennaFrequency, 1 ,5);
+        grid.add(new Label("Antenna Frequency:"), 0, 5);
+        grid.add(antennaFrequency, 1, 5);
 
-        grid.add(new Label("Antenna Capacity:"),0,6);
-        grid.add(antennaCapcity, 1 ,6);
-
+        grid.add(new Label("Antenna Capacity:"), 0, 6);
+        grid.add(antennaCapcity, 1, 6);
 
 
         ButtonType btsValidateButtonType = new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE);
@@ -183,15 +183,14 @@ public class Main extends Application {
 
         // Do some validation (using the Java 8 lambda syntax).
         antennaPosXIntput.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!antennaPosYIntput.getText().trim().isEmpty())
-            validateButton.setDisable(newValue.trim().isEmpty());
+            if (!antennaPosYIntput.getText().trim().isEmpty())
+                validateButton.setDisable(newValue.trim().isEmpty());
 
         });
         antennaPosYIntput.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!antennaPosXIntput.getText().trim().isEmpty())
-            validateButton.setDisable(newValue.trim().isEmpty());
+            if (!antennaPosXIntput.getText().trim().isEmpty())
+                validateButton.setDisable(newValue.trim().isEmpty());
         });
-
 
 
         dialog.getDialogPane().setContent(grid);
@@ -199,7 +198,7 @@ public class Main extends Application {
         // when validate button of bts form is clicked
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btsValidateButtonType) {
-                BTS addedBTS = new BTS (btsNameInput.getText(),
+                BTS addedBTS = new BTS(btsNameInput.getText(),
                         Integer.parseInt(antennaPosXIntput.getText()),
                         Integer.parseInt(antennaPosYIntput.getText()),
                         Double.parseDouble(gainTrInput.getText()),
@@ -229,8 +228,8 @@ public class Main extends Application {
                             public void handle(MouseEvent t) {
                                 orgSceneX = t.getSceneX();
                                 orgSceneY = t.getSceneY();
-                                orgTranslateX = ((Rectangle)(t.getSource())).getTranslateX();
-                                orgTranslateY = ((Rectangle)(t.getSource())).getTranslateY();
+                                orgTranslateX = ((Rectangle) (t.getSource())).getTranslateX();
+                                orgTranslateY = ((Rectangle) (t.getSource())).getTranslateY();
                             }
                         };
 
@@ -240,7 +239,7 @@ public class Main extends Application {
 
                             @Override
                             public void handle(MouseEvent t) {
-                                if(!appLaunched) {
+                                if (!appLaunched) {
                                     double offsetX = t.getSceneX() - orgSceneX;
                                     double offsetY = t.getSceneY() - orgSceneY;
                                     double newTranslateX = orgTranslateX + offsetX;
@@ -279,8 +278,6 @@ public class Main extends Application {
         networkLink.setStroke(Color.RED);
 
 
-
-
         Button btsButton = (Button) root.lookup("#btsButton");
 
         // event handler on BTS button click
@@ -301,62 +298,61 @@ public class Main extends Application {
             count++;
             transition.pause();
 
-            distances.put("d1",Calcul.distance(
+            distances.put("d1", Calcul.distance(
                     deviceShape.translateXProperty().getValue(),
                     deviceShape.translateYProperty().getValue(),
                     bts1.getLayoutX(),
                     bts1.getLayoutY()));
 
-
-            System.out.println("distance between device and BTS 1 is: "+distances.get("d1"));
-            System.out.println("Receiving power 1: "+
-                    Calcul.calculReceivingPower(firstBts,myDevice.getGainReceiving(),lamda1,distances.get("d1")));
+            System.out.println("--------------------------------------------------");
+            System.out.println("distance between device and BTS 1 is : " + distances.get("d1"));
+            System.out.println("Receiving power 1: " +
+                    Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")));
             int compteur = 2;
-            for(BTS b: btsList){
-                distances.put("d"+compteur,Calcul.distance(
+            for (BTS b : btsList) {
+                distances.put("d" + compteur, Calcul.distance(
                         deviceShape.translateXProperty().getValue(),
                         deviceShape.translateYProperty().getValue(),
                         b.getShape().getX(),
                         b.getShape().getY()));
-                System.out.println("distance between device and BTS"+compteur+" is: "+distances.get("d"+compteur));
+                System.out.println("distance between device and BTS " + compteur + " is: " + distances.get("d" + compteur));
 
-                System.out.println("Receiving power for BTS "+compteur+": "+
-                        Calcul.calculReceivingPower(b,myDevice.getGainReceiving(),Calcul.lamda(b.getFrequency())
-                                ,distances.get("d"+compteur)));
+                System.out.println("Receiving power for BTS " + compteur + ": " +
+                        Calcul.calculReceivingPower(b, myDevice.getGainReceiving(), Calcul.lamda(b.getFrequency())
+                                , distances.get("d" + compteur)));
+                receivingPowerMap.put("pr" + compteur, Calcul.calculReceivingPower(b, myDevice.getGainReceiving(), Calcul.lamda(b.getFrequency())
+                        , distances.get("d" + compteur)));
                 compteur++;
 
                 System.out.println("--------------------------------------------------");
 
-                if(count == 2) {
-                    MapUtil.sortByValue(distances);
-                    Map.Entry<String,Double> entry = distances.entrySet().iterator().next();
-                    String key = entry.getKey();
-                    Double value = entry.getValue();
+                if (count == 3) {
+//                    MapUtil.sortByValue(distances);
+//                    Map.Entry<String,Double> entry = distances.entrySet().iterator().next();
+//                    String key = entry.getKey();
+//                    Double value = entry.getValue();
+                    MapUtil.sortByValue(receivingPowerMap);
+                    Map.Entry<String, Double> entry = receivingPowerMap.entrySet().iterator().next();
+                    System.out.println("The best Power receiving is : "+entry.getKey() + ", value :"+entry.getValue());
+                    String[] numberOfBts = entry.getKey().split("pr");
+                    String part2 = numberOfBts[1];
+                    System.out.println("BTS "+part2+" choisi");
+                    /*
+                    * todo
+                    * add a pop up here, to show the chosen bts, and stop the program after 3 pauses
+                    * add the console panel
+                    * play with device animation
+                    * */
 
-                    if (Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")) >
-                            Calcul.calculReceivingPower(b, myDevice.getGainReceiving(), Calcul.lamda(b.getFrequency()), distances.get("d2"))) {
-                        System.out.println("BTS 1 choisi");
-                        if(firstBts.getCapacity() < 1){
-                            System.out.println("BTS 1 manque de capacité");
-                            //switch vers BTS 2
-                            System.out.println("switch vers BTS 2");
-                        }
-                    } else {
-                        System.out.println("BTS 2 choisi");
-                    }
                 }
             }
-
-
-            //pop-up
-
         });
 
 
-
     }
+
     // function to create a network link between device and BTS
-    public void createLink(Circle myDevice , Rectangle bts1) {
+    public void createLink(Circle myDevice, Rectangle bts1) {
         Line networkLink = new Line();
         networkLink.setStartX(myDevice.getCenterX());
         networkLink.setStartY(myDevice.getCenterY());
@@ -366,8 +362,8 @@ public class Main extends Application {
     }
 
     // Function to compute distance between device and BTS
-    public int computeDistance(){
-    return 1;
+    public int computeDistance() {
+        return 1;
     }
 
 
