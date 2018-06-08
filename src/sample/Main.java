@@ -11,38 +11,33 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.TriangleMesh;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import jdk.internal.util.xml.impl.Pair;
 import sample.Controller.Calcul;
 import javafx.scene.input.MouseEvent;
 
-import org.w3c.dom.css.Rect;
-import sample.Controller.MapUtil;
 import sample.Model.BTS;
 import sample.Model.Device;
 
-import java.io.File;
 import java.util.*;
 
 public class Main extends Application {
+    public static int count = 0;
     // Cordonnées repère
     double orgSceneX, orgSceneY;
     double orgTranslateX, orgTranslateY;
     boolean appLaunched = false;
     boolean appPause = false;
 
-
-    public static int count = 0;
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -53,8 +48,8 @@ public class Main extends Application {
 
         // List of BTS
         ArrayList<BTS> btsList = new ArrayList<>();
-        Map<String, Double> distances = new HashMap<>();
-        Map<String, Double> receivingPowerMap = new HashMap<>();
+        HashMap<String, Float> distances = new HashMap<>();
+        Map<String, Double> receivingPowerMap = new HashMap<String, Double>();
 
 
         // linking circle with its java object
@@ -266,7 +261,7 @@ public class Main extends Application {
             }
             return null;
         });
-        createLink(deviceShape, bts1);
+        //createLink(deviceShape, bts1);
 
 
         networkLink.startXProperty().bind(bts1.xProperty().add(bts1.layoutXProperty()));
@@ -285,7 +280,7 @@ public class Main extends Application {
             System.out.print("bts button clicked!");
             //Circle myBTS = new Circle(250,250,250 , Color.YELLOW);
             //root.getChildrenUnmodifiable().add(1 , myBTS);
-            createLink(deviceShape, bts1);
+            //createLink(deviceShape, bts1);
             //alert.showAndWait();
             Optional<String> result = dialog.showAndWait();
 
@@ -308,6 +303,7 @@ public class Main extends Application {
             System.out.println("distance between device and BTS 1 is : " + distances.get("d1"));
             System.out.println("Receiving power 1: " +
                     Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")));
+            receivingPowerMap.put("pr1", Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")));
             int compteur = 2;
             for (BTS b : btsList) {
                 distances.put("d" + compteur, Calcul.distance(
@@ -320,7 +316,9 @@ public class Main extends Application {
                 System.out.println("Receiving power for BTS " + compteur + ": " +
                         Calcul.calculReceivingPower(b, myDevice.getGainReceiving(), Calcul.lamda(b.getFrequency())
                                 , distances.get("d" + compteur)));
-                receivingPowerMap.put("pr" + compteur, Calcul.calculReceivingPower(b, myDevice.getGainReceiving(), Calcul.lamda(b.getFrequency())
+                receivingPowerMap.put("pr" + compteur, Calcul.calculReceivingPower(b,
+                        myDevice.getGainReceiving(),
+                        Calcul.lamda(b.getFrequency())
                         , distances.get("d" + compteur)));
                 compteur++;
 
@@ -331,43 +329,44 @@ public class Main extends Application {
 //                    Map.Entry<String,Double> entry = distances.entrySet().iterator().next();
 //                    String key = entry.getKey();
 //                    Double value = entry.getValue();
-                    MapUtil.sortByValue(receivingPowerMap);
-                    Map.Entry<String, Double> entry = receivingPowerMap.entrySet().iterator().next();
-                    System.out.println("The best Power receiving is : "+entry.getKey() + ", value :"+entry.getValue());
+                    MyComparator comp = new MyComparator(receivingPowerMap);
+
+                    Map<String, Double> newReceivingPowerMap = new TreeMap(comp);
+
+                    newReceivingPowerMap.putAll(receivingPowerMap);
+
+
+                    Map.Entry<String, Double> entry = newReceivingPowerMap.entrySet().iterator().next();
+                    System.out.println("The best Power receiving is : " + entry.getKey() + ", value :" + entry.getValue());
                     String[] numberOfBts = entry.getKey().split("pr");
                     String part2 = numberOfBts[1];
-                    System.out.println("BTS "+part2+" choisi");
+                    System.out.println("BTS " + part2 + " choisi");
+
+                    Line newNetworkLink = new Line();
+                    newNetworkLink.setStartX(deviceShape.getCenterX());
+                    newNetworkLink.setEndX(b.getShape().getX());
+
+                    anchorPane.getChildren().addAll(newNetworkLink);
+
+                    //ici je ne dois pas laisser juste b pour créer le shape, il faut cibler le b approprié
+                    newNetworkLink.startXProperty().bind(b.getShape().translateXProperty().add(b.getShape().layoutXProperty()));
+                    newNetworkLink.startYProperty().bind(b.getShape().translateYProperty().add(b.getShape().layoutYProperty()));
+
+                    newNetworkLink.endXProperty().bind(deviceShape.layoutXProperty().add(deviceShape.translateXProperty()));
+                    newNetworkLink.endYProperty().bind(deviceShape.layoutYProperty().add(deviceShape.translateYProperty()));
+
+                    newNetworkLink.setStroke(Color.BLACK);
                     /*
-                    * todo
-                    * add a pop up here, to show the chosen bts, and stop the program after 3 pauses
-                    * add the console panel
-                    * play with device animation
-                    * */
+                     * todo
+                     * add a pop up here, to show the chosen bts, and stop the program after 3 pauses
+                     * add the console panel
+                     * play with device animation
+                     * add BTS info's Rectangle using a Text
+                     * BSC can manage different BTS
+                     * */
 
                 }
             }
         });
-
-
-    }
-
-    // function to create a network link between device and BTS
-    public void createLink(Circle myDevice, Rectangle bts1) {
-        Line networkLink = new Line();
-        networkLink.setStartX(myDevice.getCenterX());
-        networkLink.setStartY(myDevice.getCenterY());
-        networkLink.setEndX(bts1.getX());
-        networkLink.setEndY(bts1.getY());
-
-    }
-
-    // Function to compute distance between device and BTS
-    public int computeDistance() {
-        return 1;
-    }
-
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
