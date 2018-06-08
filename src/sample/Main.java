@@ -193,14 +193,15 @@ public class Main extends Application {
         // when validate button of bts form is clicked
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btsValidateButtonType) {
+                int btsRank = btsList.size()+1;
                 BTS addedBTS = new BTS(btsNameInput.getText(),
                         Integer.parseInt(antennaPosXIntput.getText()),
                         Integer.parseInt(antennaPosYIntput.getText()),
                         Double.parseDouble(gainTrInput.getText()),
                         Double.parseDouble(powerTrInput.getText()),
                         Long.parseLong(antennaFrequency.getText()),
-                        Integer.parseInt(antennaCapcity.getText())
-                );
+                        Integer.parseInt(antennaCapcity.getText()),
+                        btsRank);
 
                 Rectangle btsShape = new Rectangle();
                 btsShape.setX(addedBTS.getPositionX());

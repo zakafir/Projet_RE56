@@ -13,6 +13,7 @@ public class BTS {
     private int height;
     private int capacity;
     private Rectangle shape;
+    private int btsNumber;
 
     public BTS() {
 
@@ -24,7 +25,7 @@ public class BTS {
         this.frequency = frequency;
     }
 
-    public BTS(String name, int positionX, int positionY, double gainTransmitting, double powerTransmitting, Long frequency, int capacity) {
+    public BTS(String name, int positionX, int positionY, double gainTransmitting, double powerTransmitting, Long frequency, int capacity , int btsNumber) {
         this.name = name;
         this.positionX = positionX;
         this.positionY = positionY;
@@ -33,6 +34,7 @@ public class BTS {
         this.frequency = frequency;
         this.height = height;
         this.capacity = capacity;
+        this.btsNumber = btsNumber;
     }
 
     public BTS(String name, int positionX, int positionY, double gainTransmitting, double powerTransmitting, Long frequency, int height, int capacity, Rectangle shape) {
@@ -141,6 +143,7 @@ public class BTS {
                 ", height=" + height +
                 ", capacity=" + capacity +
                 ", shape=" + shape +
+                ", btsNumber=" + btsNumber +
                 '}';
     }
 }
