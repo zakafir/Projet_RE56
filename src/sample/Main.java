@@ -22,6 +22,7 @@ import javafx.util.Duration;
 import sample.Controller.Calcul;
 import javafx.scene.input.MouseEvent;
 
+import sample.Model.BSC;
 import sample.Model.BTS;
 import sample.Model.Device;
 
@@ -34,6 +35,8 @@ public class Main extends Application {
     double orgTranslateX, orgTranslateY;
     boolean appLaunched = false;
     boolean appPause = false;
+
+    public static int btsRank = 0;
 
     public static void main(String[] args) {
         launch(args);
@@ -64,7 +67,8 @@ public class Main extends Application {
         double secondsPerCompleteCycle = 10;
         // Button was clicked, do something...
         TranslateTransition transition = new TranslateTransition();
-        transition.setDuration(Duration.seconds(secondsPerCompleteCycle));
+        Duration duration = Duration.seconds(secondsPerCompleteCycle);
+        transition.setDuration(duration);
         transition.setFromX(myLine.getStartX());
         //transition.setFromY(myLine.getStartY());
 
@@ -93,6 +97,7 @@ public class Main extends Application {
 
         // initialize bts 1
         Rectangle bts1 = (Rectangle) root.lookup("#bts1");
+        BSC bsc = new BSC();
         BTS firstBts = new BTS("First BTS", 133.0, 12.0,
                 3000L, 100, 3, bts1);
         double lamda1 = Calcul.lamda(firstBts.getFrequency());
@@ -193,7 +198,7 @@ public class Main extends Application {
         // when validate button of bts form is clicked
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btsValidateButtonType) {
-                int btsRank = btsList.size()+1;
+                btsRank = btsList.size()+1;
                 BTS addedBTS = new BTS(btsNameInput.getText(),
                         Integer.parseInt(antennaPosXIntput.getText()),
                         Integer.parseInt(antennaPosYIntput.getText()),
@@ -300,6 +305,9 @@ public class Main extends Application {
                     bts1.getLayoutX(),
                     bts1.getLayoutY()));
 
+            bsc.setBts(btsList);
+            System.out.println("BSC created");
+            System.out.println("Elements: "+btsList.toString());
             System.out.println("--------------------------------------------------");
             System.out.println("distance between device and BTS 1 is : " + distances.get("d1"));
             System.out.println("Receiving power 1: " +
@@ -341,7 +349,6 @@ public class Main extends Application {
                     System.out.println("The best Power receiving is : " + entry.getKey() + ", value :" + entry.getValue());
                     String[] numberOfBts = entry.getKey().split("pr");
                     String part2 = numberOfBts[1];
-                    System.out.println("BTS " + part2 + " choisi");
 
                     Line newNetworkLink = new Line();
                     newNetworkLink.setStartX(deviceShape.getCenterX());
@@ -349,20 +356,30 @@ public class Main extends Application {
 
                     anchorPane.getChildren().addAll(newNetworkLink);
 
-                    //ici je ne dois pas laisser juste b pour créer le shape, il faut cibler le b approprié
-                    newNetworkLink.startXProperty().bind(b.getShape().translateXProperty().add(b.getShape().layoutXProperty()));
-                    newNetworkLink.startYProperty().bind(b.getShape().translateYProperty().add(b.getShape().layoutYProperty()));
 
-                    newNetworkLink.endXProperty().bind(deviceShape.layoutXProperty().add(deviceShape.translateXProperty()));
-                    newNetworkLink.endYProperty().bind(deviceShape.layoutYProperty().add(deviceShape.translateYProperty()));
+                    for(BTS newB : btsList) {
+                        if (btsRank == newB.getBtsNumber()) {
+                            System.out.println("BTS " + part2 + " choisi");
+                            newNetworkLink.startXProperty().bind(newB.getShape().translateXProperty().add(newB.getShape().layoutXProperty()));
+                            newNetworkLink.startYProperty().bind(newB.getShape().translateYProperty().add(newB.getShape().layoutYProperty()));
 
-                    newNetworkLink.setStroke(Color.BLACK);
+                            newNetworkLink.endXProperty().bind(deviceShape.layoutXProperty().add(deviceShape.translateXProperty()));
+                            newNetworkLink.endYProperty().bind(deviceShape.layoutYProperty().add(deviceShape.translateYProperty()));
+
+
+                            networkLink.setStroke(Color.LIGHTGRAY);
+                            newNetworkLink.setStroke(Color.BLACK);
+
+                            System.out.println("FIN DU PROGRAMME");
+
+                        }
+                    }
+                    break;
                     /*
                      * todo
                      * add a pop up here, to show the chosen bts, and stop the program after 3 pauses
                      * add the console panel
-                     * play with device animation
-                     * add BTS info's Rectangle using a Text
+                     * add BTS info's Rectangle using a Text (using hover)
                      * BSC can manage different BTS
                      * */
 

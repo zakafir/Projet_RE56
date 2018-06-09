@@ -131,6 +131,15 @@ public class BTS {
         this.shape = shape;
     }
 
+
+    public int getBtsNumber() {
+        return btsNumber;
+    }
+
+    public void setBtsNumber(int btsNumber) {
+        this.btsNumber = btsNumber;
+    }
+
     @Override
     public String toString() {
         return "BTS{" +
