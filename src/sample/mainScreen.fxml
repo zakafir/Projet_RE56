@@ -9,6 +9,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -16,9 +17,6 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Line?>
-<?import javafx.scene.shape.LineTo?>
-<?import javafx.scene.shape.MoveTo?>
-<?import javafx.scene.shape.Path?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -66,9 +64,9 @@
     </MenuBar>
     <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-        <AnchorPane prefHeight="551.0" prefWidth="149.0">
+        <AnchorPane prefHeight="551.0" prefWidth="274.0">
           <children>
-            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Master" textAlignment="CENTER" wrapText="false">
+            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Commands" textAlignment="CENTER" wrapText="false">
               <font>
                 <Font size="18.0" fx:id="x1" />
               </font>
@@ -79,11 +77,25 @@
                   <Button id="playButton" layoutX="24.0" layoutY="63.0" mnemonicParsing="false" text="Start" />
                   <Button id="pauseButton" layoutX="24.0" layoutY="97.0" mnemonicParsing="false" text="Pause" />
                   <Button id="stopButton" layoutX="24.0" layoutY="133.0" mnemonicParsing="false" text="Stop" />
+                  <Label alignment="CENTER" layoutX="16.0" layoutY="287.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Console" textAlignment="CENTER" wrapText="false">
+                     <font>
+                        <Font size="18.0" fx:id="x11" />
+                     </font>
+                     <textFill>
+                        <Color blue="0.624" green="0.624" red="0.624" fx:id="x21" />
+                     </textFill>
+                  </Label>
+                  <TextArea id="consoleTextArea" editable="false" layoutX="4.0" layoutY="323.0" prefHeight="229.0" prefWidth="404.0" style="-fx-control-inner-background:#000000; -fx-font-family: Consolas; -fx-highlight-fill: #00ff00; -fx-highlight-text-fill: #000000; -fx-text-fill: #00ff00; ">
+
+                    <font>
+                      <Font name="System Bold" size="14.0" />
+                    </font>>
+                  </TextArea>
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
           <content>
-            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
+            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="1040.0">
               <children>
                 <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$x2" wrapText="false" />
                         <Line id="mySegment" endX="500.0" layoutX="500.0" layoutY="0.0" startX="0.0" />
@@ -94,13 +106,13 @@
             </AnchorPane>
           </content>
         </ScrollPane>
-        <AnchorPane>
+        <AnchorPane maxWidth="125.0" prefHeight="563.0" prefWidth="136.0">
           <children>
-            <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                  <Button id="btsButton" layoutX="27.0" layoutY="76.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="58.0" text="BTS" />
-                  <Button id="bscButton" layoutX="119.0" layoutY="76.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="58.0" text="BSC" />
-                  <Button layoutX="27.0" layoutY="156.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="58.0" text="MS" />
-                  <Button layoutX="119.0" layoutY="156.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="58.0" text="Button" />
+            <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Tools" textAlignment="CENTER" textFill="$x2" wrapText="false" />
+                  <Button id="btsButton" layoutX="8.0" layoutY="76.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="58.0" text="BTS" />
+                  <Button id="bscButton" layoutX="100.0" layoutY="76.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="58.0" text="BSC" />
+                  <Button layoutX="8.0" layoutY="156.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="58.0" text="MS" />
+                  <Button layoutX="100.0" layoutY="156.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="58.0" text="Button" />
           </children>
         </AnchorPane>
       </items>

@@ -24,6 +24,7 @@ import javafx.scene.input.MouseEvent;
 
 import sample.Model.BTS;
 import sample.Model.Device;
+import sample.Model.ConsoleArea;
 
 import java.util.*;
 
@@ -51,6 +52,11 @@ public class Main extends Application {
         HashMap<String, Float> distances = new HashMap<>();
         Map<String, Double> receivingPowerMap = new HashMap<String, Double>();
 
+
+        // instanciating textarea object
+        TextArea consoleTextArea = (TextArea) root.lookup("#consoleTextArea");
+        consoleTextArea.setStyle("-fx-control-inner-background:#000000; -fx-font-family: Consolas; -fx-highlight-fill: #00ff00; -fx-highlight-text-fill: #000000; -fx-text-fill: #00ff00; ");
+        ConsoleArea appConsole = new ConsoleArea(consoleTextArea);
 
         // linking circle with its java object
 
@@ -96,7 +102,7 @@ public class Main extends Application {
         BTS firstBts = new BTS("First BTS", 133.0, 12.0,
                 3000L, 100, 3, bts1);
         double lamda1 = Calcul.lamda(firstBts.getFrequency());
-        System.out.println("lamda du BTS 1: " + lamda1);
+        appConsole.printToConsole("lamda du BTS 1: " + lamda1);
 
         //Image bts1Image = new Image("../assets/antenna.png");
         //Image bts1Image = new Image("/assets/antenna.png");
@@ -259,6 +265,9 @@ public class Main extends Application {
                 anchorPane.getChildren().addAll(addedBTS.getShape());
 
                 System.out.println(addedBTS);
+                appConsole.printToConsole("added BTS");
+                appConsole.printToConsole("added BTS 2");
+
             }
             return null;
         });
@@ -300,9 +309,9 @@ public class Main extends Application {
                     bts1.getLayoutX(),
                     bts1.getLayoutY()));
 
-            System.out.println("--------------------------------------------------");
-            System.out.println("distance between device and BTS 1 is : " + distances.get("d1"));
-            System.out.println("Receiving power 1: " +
+            appConsole.printToConsole("--------------------------------------------------");
+            appConsole.printToConsole("distance between device and BTS 1 is : " + distances.get("d1"));
+            appConsole.printToConsole("Receiving power 1: " +
                     Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")));
             receivingPowerMap.put("pr1", Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")));
             int compteur = 2;
@@ -312,9 +321,9 @@ public class Main extends Application {
                         deviceShape.translateYProperty().getValue(),
                         b.getShape().getX(),
                         b.getShape().getY()));
-                System.out.println("distance between device and BTS " + compteur + " is: " + distances.get("d" + compteur));
+                appConsole.printToConsole("distance between device and BTS " + compteur + " is: " + distances.get("d" + compteur));
 
-                System.out.println("Receiving power for BTS " + compteur + ": " +
+                appConsole.printToConsole("Receiving power for BTS " + compteur + ": " +
                         Calcul.calculReceivingPower(b, myDevice.getGainReceiving(), Calcul.lamda(b.getFrequency())
                                 , distances.get("d" + compteur)));
                 receivingPowerMap.put("pr" + compteur, Calcul.calculReceivingPower(b,
@@ -323,7 +332,7 @@ public class Main extends Application {
                         , distances.get("d" + compteur)));
                 compteur++;
 
-                System.out.println("--------------------------------------------------");
+                appConsole.printToConsole("--------------------------------------------------");
 
                 if (count == 3) {
 //                    MapUtil.sortByValue(distances);
@@ -338,10 +347,10 @@ public class Main extends Application {
 
 
                     Map.Entry<String, Double> entry = newReceivingPowerMap.entrySet().iterator().next();
-                    System.out.println("The best Power receiving is : " + entry.getKey() + ", value :" + entry.getValue());
+                    appConsole.printToConsole("The best Power receiving is : " + entry.getKey() + ", value :" + entry.getValue());
                     String[] numberOfBts = entry.getKey().split("pr");
                     String part2 = numberOfBts[1];
-                    System.out.println("BTS " + part2 + " choisi");
+                    appConsole.printToConsole("BTS " + part2 + " choisi");
 
                     Line newNetworkLink = new Line();
                     newNetworkLink.setStartX(deviceShape.getCenterX());
