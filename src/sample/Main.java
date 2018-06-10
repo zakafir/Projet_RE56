@@ -36,7 +36,6 @@ public class Main extends Application {
     double orgTranslateX, orgTranslateY;
     boolean appLaunched = false;
     boolean appPause = false;
-
     public static int btsRank = 0;
 
     public static void main(String[] args) {
@@ -295,7 +294,6 @@ public class Main extends Application {
             System.out.print("bts button clicked!");
             //Circle myBTS = new Circle(250,250,250 , Color.YELLOW);
             //root.getChildrenUnmodifiable().add(1 , myBTS);
-            //createLink(deviceShape, bts1);
             //alert.showAndWait();
             Optional<String> result = dialog.showAndWait();
 
@@ -315,15 +313,13 @@ public class Main extends Application {
                     bts1.getLayoutY()));
 
             bsc.setBts(btsList);
-            System.out.println("BSC created");
-            System.out.println("Elements: "+btsList.toString());
-            System.out.println("--------------------------------------------------");
-            System.out.println("distance between device and BTS 1 is : " + distances.get("d1"));
-            System.out.println("Receiving power 1: " +
+            appConsole.printToConsole("BSC created");
+            appConsole.printToConsole("Elements: "+btsList.toString());
             appConsole.printToConsole("--------------------------------------------------");
             appConsole.printToConsole("distance between device and BTS 1 is : " + distances.get("d1"));
             appConsole.printToConsole("Receiving power 1: " +
                     Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")));
+
             receivingPowerMap.put("pr1", Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")));
             int compteur = 2;
             for (BTS b : btsList) {
@@ -372,7 +368,7 @@ public class Main extends Application {
 
                     for(BTS newB : btsList) {
                         if (btsRank == newB.getBtsNumber()) {
-                            System.out.println("BTS " + part2 + " choisi");
+                            appConsole.printToConsole("BTS " + part2 + " choisi");
                             newNetworkLink.startXProperty().bind(newB.getShape().translateXProperty().add(newB.getShape().layoutXProperty()));
                             newNetworkLink.startYProperty().bind(newB.getShape().translateYProperty().add(newB.getShape().layoutYProperty()));
 
@@ -383,7 +379,7 @@ public class Main extends Application {
                             networkLink.setStroke(Color.LIGHTGRAY);
                             newNetworkLink.setStroke(Color.BLACK);
 
-                            System.out.println("FIN DU PROGRAMME");
+                            appConsole.printToConsole("FIN DU PROGRAMME");
 
                         }
                     }
