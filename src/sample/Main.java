@@ -53,6 +53,7 @@ public class Main extends Application {
         ArrayList<BTS> btsList = new ArrayList<>();
         HashMap<String, Float> distances = new HashMap<>();
         Map<String, Double> receivingPowerMap = new HashMap<String, Double>();
+        BSC bsc = new BSC();
 
 
         // instanciating textarea object
@@ -91,6 +92,16 @@ public class Main extends Application {
         playButton.setOnAction((event) -> {
             transition.play();
             appLaunched = true;
+
+            appConsole.printToConsole("BSC contains "+ (bsc.getBts().size()+1) +" BTS: "+"\n");
+            for (BTS b : bsc.getBts()){
+                appConsole.printToConsole("Number: "+b.getBtsNumber());
+                appConsole.printToConsole("Gt: "+b.getGainTransmitting());
+                appConsole.printToConsole("Pt: "+b.getPowerTransmitting());
+                appConsole.printToConsole("Frequency: "+b.getFrequency().toString());
+            }
+
+
         });
 
         //creating stop button logic
@@ -102,11 +113,9 @@ public class Main extends Application {
 
         // initialize bts 1
         Rectangle bts1 = (Rectangle) root.lookup("#bts1");
-        BSC bsc = new BSC();
         BTS firstBts = new BTS("First BTS", 133.0, 12.0,
                 3000L, 100, 3, bts1);
-        double lamda1 = Calcul.lamda(firstBts.getFrequency());
-        appConsole.printToConsole("lamda du BTS 1: " + lamda1);
+        double lambda1 = Calcul.lamda(firstBts.getFrequency());
 
         //Image bts1Image = new Image("../assets/antenna.png");
         //Image bts1Image = new Image("/assets/antenna.png");
@@ -120,7 +129,7 @@ public class Main extends Application {
         //networkLink.setEndY(bts1.getY());
 
 
-        Circle testCircle = new Circle(250, 300, 300);
+        //Circle testCircle = new Circle(250, 300, 300);
 
         AnchorPane anchorPane = (AnchorPane) root.lookup("#Content");
         anchorPane.getChildren().addAll(networkLink);
@@ -263,15 +272,17 @@ public class Main extends Application {
 
                 addedBTS.setShape(btsShape);
                 // adding a BTS to the BTS list
-                btsList.add(addedBTS);
+                if(addedBTS.getCapacity() > 0) {
+                    btsList.add(addedBTS);
+                }else{
+                    appConsole.printToConsole("ce BTS "+
+                            "a une capacité = 0");
+                }
 
 
                 anchorPane.getChildren().addAll(addedBTS.getShape());
 
                 System.out.println(addedBTS);
-                appConsole.printToConsole("added BTS");
-                appConsole.printToConsole("added BTS 2");
-
             }
             return null;
         });
@@ -285,6 +296,9 @@ public class Main extends Application {
         networkLink.endYProperty().bind(deviceShape.layoutYProperty().add(deviceShape.translateYProperty()));
 
         networkLink.setStroke(Color.RED);
+
+        bsc.setBts(btsList);
+        appConsole.printToConsole("BSC created");
 
 
         Button btsButton = (Button) root.lookup("#btsButton");
@@ -312,31 +326,39 @@ public class Main extends Application {
                     bts1.getLayoutX(),
                     bts1.getLayoutY()));
 
-            bsc.setBts(btsList);
-            appConsole.printToConsole("BSC created");
-            appConsole.printToConsole("Elements: "+btsList.toString());
-            appConsole.printToConsole("--------------------------------------------------");
-            appConsole.printToConsole("distance between device and BTS 1 is : " + distances.get("d1"));
-            appConsole.printToConsole("Receiving power 1: " +
-                    Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")));
 
-            receivingPowerMap.put("pr1", Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lamda1, distances.get("d1")));
+            appConsole.printToConsole("device --> BTS 1 : " + distances.get("d1")+"m");
+            appConsole.printToConsole("Receiving power 1: " +
+                    Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lambda1,
+                            distances.get("d1")));
+
+            receivingPowerMap.put("pr1", Calcul.calculReceivingPower(firstBts, myDevice.getGainReceiving(), lambda1, distances.get("d1")));
             int compteur = 2;
+
+            if (count == 3 && btsList.isEmpty()) {
+                appConsole.printToConsole("On ne peut pas faire le handover"
+                        +", le device reste connecté au BTS 1");
+                appConsole.printToConsole("BTS 1 choisi");
+                appConsole.printToConsole("FIN DU PROGRAMME");
+            }
             for (BTS b : btsList) {
                 distances.put("d" + compteur, Calcul.distance(
                         deviceShape.translateXProperty().getValue(),
                         deviceShape.translateYProperty().getValue(),
                         b.getShape().getX(),
                         b.getShape().getY()));
-                appConsole.printToConsole("distance between device and BTS " + compteur + " is: " + distances.get("d" + compteur));
 
-                appConsole.printToConsole("Receiving power for BTS " + compteur + ": " +
+                appConsole.printToConsole("device --> BTS " + compteur + " : " + distances.get("d" + compteur)+"m");
+
+                appConsole.printToConsole("Receiving power " + compteur + ": " +
                         Calcul.calculReceivingPower(b, myDevice.getGainReceiving(), Calcul.lamda(b.getFrequency())
                                 , distances.get("d" + compteur)));
+
                 receivingPowerMap.put("pr" + compteur, Calcul.calculReceivingPower(b,
                         myDevice.getGainReceiving(),
                         Calcul.lamda(b.getFrequency())
                         , distances.get("d" + compteur)));
+
                 compteur++;
 
                 appConsole.printToConsole("--------------------------------------------------");
@@ -387,7 +409,6 @@ public class Main extends Application {
                     /*
                      * todo
                      * add a pop up here, to show the chosen bts, and stop the program after 3 pauses
-                     * add the console panel
                      * add BTS info's Rectangle using a Text (using hover)
                      * BSC can manage different BTS
                      * */
