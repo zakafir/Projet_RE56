@@ -11,9 +11,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -120,6 +122,9 @@ public class Main extends Application {
         //Image bts1Image = new Image("../assets/antenna.png");
         //Image bts1Image = new Image("/assets/antenna.png");
         //bts1.setFill(new ImagePattern(bts1Image));
+        Image btsImage = new Image("sample/assets/antenna.png");
+        //Image bts1Image = new Image("file:antenna.png",100,0, false , false);
+        firstBts.getShape().setFill(new ImagePattern(btsImage));
 
 
         Line networkLink = new Line();
@@ -230,10 +235,12 @@ public class Main extends Application {
                 btsShape.setArcHeight(5);
                 btsShape.setArcWidth(5);
                 btsShape.setStroke(Color.BLACK);
+                btsShape.setStrokeWidth(0);
                 btsShape.setFill(Color.valueOf("#1f93ff00"));
                 // setting bts image
+                Image bts1Image = new Image("sample/assets/antenna.png");
                 //Image bts1Image = new Image("file:antenna.png",100,0, false , false);
-                //btsShape.setFill(new ImagePattern(bts1Image));
+                btsShape.setFill(new ImagePattern(bts1Image));
 
                 //event click sur shape
                 EventHandler<MouseEvent> btsShapeOnMousePressedEventHandler =
