@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import sample.Controller.Calcul;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Tooltip;
 
 import sample.Model.BSC;
 import sample.Model.BTS;
@@ -69,6 +70,10 @@ public class Main extends Application {
         Circle deviceShape = (Circle) root.lookup("#myDevice");
         myDevice.setShape(deviceShape);
         Line myLine = (Line) root.lookup("#mySegment");
+
+        Image deviceImage = new Image("sample/assets/gsm.png");
+        //Image bts1Image = new Image("file:antenna.png",100,0, false , false);
+        myDevice.getShape().setFill(new ImagePattern(deviceImage));
 
 
         // Defining animation
@@ -125,6 +130,9 @@ public class Main extends Application {
         Image btsImage = new Image("sample/assets/antenna.png");
         //Image bts1Image = new Image("file:antenna.png",100,0, false , false);
         firstBts.getShape().setFill(new ImagePattern(btsImage));
+
+        Tooltip t1 = new Tooltip(firstBts.toString());
+        Tooltip.install(firstBts.getShape(), t1);
 
 
         Line networkLink = new Line();
@@ -241,6 +249,10 @@ public class Main extends Application {
                 Image bts1Image = new Image("sample/assets/antenna.png");
                 //Image bts1Image = new Image("file:antenna.png",100,0, false , false);
                 btsShape.setFill(new ImagePattern(bts1Image));
+
+                Tooltip t = new Tooltip(addedBTS.toString());
+                Tooltip.install(btsShape, t);
+
 
                 //event click sur shape
                 EventHandler<MouseEvent> btsShapeOnMousePressedEventHandler =
