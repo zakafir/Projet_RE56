@@ -294,8 +294,8 @@ public class Main extends Application {
                 if(addedBTS.getCapacity() > 0) {
                     btsList.add(addedBTS);
                 }else{
-                    appConsole.printToConsole("ce BTS "+
-                            "a une capacité = 0");
+                    appConsole.printToConsole("this BTS "+
+                            "has the capacity = 0");
                 }
 
 
@@ -355,10 +355,10 @@ public class Main extends Application {
             int compteur = 2;
 
             if (count == 3 && btsList.isEmpty()) {
-                appConsole.printToConsole("On ne peut pas faire le handover"
-                        +", le device reste connecté au BTS 1");
-                appConsole.printToConsole("BTS 1 choisi");
-                appConsole.printToConsole("FIN DU PROGRAMME");
+                appConsole.printToConsole("We couldn't do the handover"
+                        +", the device must remain connected to the BTS 1");
+                appConsole.printToConsole("BTS 1 selected");
+                appConsole.printToConsole("END OF PROGRAM");
             }
             for (BTS b : btsList) {
                 distances.put("d" + compteur, Calcul.distance(
@@ -398,7 +398,7 @@ public class Main extends Application {
                     appConsole.printToConsole("The best Power receiving is : " + entry.getKey() + ", value :" + entry.getValue());
                     String[] numberOfBts = entry.getKey().split("pr");
                     String part2 = numberOfBts[1];
-                    appConsole.printToConsole("BTS " + part2 + " choisi");
+                    appConsole.printToConsole("BTS " + part2 + " selected");
 
                     Line newNetworkLink = new Line();
                     newNetworkLink.setStartX(deviceShape.getCenterX());
@@ -409,7 +409,7 @@ public class Main extends Application {
 
                     for(BTS newB : btsList) {
                         if (btsRank == newB.getBtsNumber()) {
-                            appConsole.printToConsole("BTS " + part2 + " choisi");
+                            appConsole.printToConsole("BTS " + part2 + " selected");
                             newNetworkLink.startXProperty().bind(newB.getShape().translateXProperty().add(newB.getShape().layoutXProperty()));
                             newNetworkLink.startYProperty().bind(newB.getShape().translateYProperty().add(newB.getShape().layoutYProperty()));
 
@@ -420,7 +420,7 @@ public class Main extends Application {
                             networkLink.setStroke(Color.LIGHTGRAY);
                             newNetworkLink.setStroke(Color.BLACK);
 
-                            appConsole.printToConsole("FIN DU PROGRAMME");
+                            appConsole.printToConsole("END OF PROGRAM");
 
                         }
                     }
