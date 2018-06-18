@@ -60,15 +60,6 @@ public class Main extends Application {
         BSC bsc = new BSC();
 
 
-        AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                System.out.println("qlq chose");
-            }
-        };
-
-
-
         // instanciating textarea object
         TextArea consoleTextArea = (TextArea) root.lookup("#consoleTextArea");
         consoleTextArea.setStyle("-fx-control-inner-background:#000000; -fx-font-family: Consolas; -fx-highlight-fill: #00ff00; -fx-highlight-text-fill: #000000; -fx-text-fill: #00ff00; ");
@@ -107,7 +98,6 @@ public class Main extends Application {
         Button playButton = (Button) root.lookup("#playButton");
 
         playButton.setOnAction((event) -> {
-            timer.start();
             transition.play();
             appLaunched = true;
 
