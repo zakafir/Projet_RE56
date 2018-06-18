@@ -2,6 +2,7 @@ package sample;
 
 //import com.oracle.tools.packager.Log;
 
+import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -59,6 +60,15 @@ public class Main extends Application {
         BSC bsc = new BSC();
 
 
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                System.out.println("qlq chose");
+            }
+        };
+
+
+
         // instanciating textarea object
         TextArea consoleTextArea = (TextArea) root.lookup("#consoleTextArea");
         consoleTextArea.setStyle("-fx-control-inner-background:#000000; -fx-font-family: Consolas; -fx-highlight-fill: #00ff00; -fx-highlight-text-fill: #000000; -fx-text-fill: #00ff00; ");
@@ -97,6 +107,7 @@ public class Main extends Application {
         Button playButton = (Button) root.lookup("#playButton");
 
         playButton.setOnAction((event) -> {
+            timer.start();
             transition.play();
             appLaunched = true;
 
@@ -425,12 +436,6 @@ public class Main extends Application {
                         }
                     }
                     break;
-                    /*
-                     * todo
-                     * add a pop up here, to show the chosen bts, and stop the program after 3 pauses
-                     * add BTS info's Rectangle using a Text (using hover)
-                     * BSC can manage different BTS
-                     * */
 
                 }
             }
